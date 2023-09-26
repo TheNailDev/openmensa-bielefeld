@@ -1,0 +1,3 @@
+beautifulsoup4==4.12.2
+pyopenmensa==0.95.0
+soupsieve==2.5
