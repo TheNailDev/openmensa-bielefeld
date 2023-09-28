@@ -1,5 +1,5 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+# Thus workflow is based of the simple workflow for deploying static content to GitHub Pages
+name: Publish feeds to GitHub Pages
 
 on:
   # Allows you to run this workflow manually from the Actions tab
@@ -18,8 +18,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # Single deploy job since we're just deploying
-  deploy:
+  build: # Job to generate current openmensa feeds
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -42,6 +41,14 @@ jobs:
         with:
           # Upload entire repository
           path: '.'
+  
+  deploy: # Deploy the generated xml feeds to github pages
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
