@@ -30,7 +30,10 @@ def parse_mensa_plan(url: str):
                 notes += [ label.string.strip() for label in menuItem.find_all('strong', class_='menuItem__sidedish__label') ]
             else:
                 category = menuItem.find('span', class_='menuItem__line').string.strip()
-                notes += [ menuItem.find('p', class_='menuItem__text').string.strip() ]
+                menuItemText = menuItem.find('p', class_='menuItem__text').string
+                if menuItemText is not None:
+                    # Some menu items might have an empty text
+                    notes += [ menuItemText.strip() ]
             
             name = menuItem.find('h3', class_='menuItem__headline').string.strip()
             
