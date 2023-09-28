@@ -34,13 +34,15 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Generate xml feeds
         run: python create_feeds.py
+      - name: Move feeds into docs directory
+        run: mv feeds docs
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v2
         with:
-          # Upload entire repository
-          path: '.'
+          # Upload the contents of the docs directory, which also includes the openmensa feeds
+          path: 'docs/'
   
   deploy: # Deploy the generated xml feeds to github pages
     needs: build
