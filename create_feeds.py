@@ -22,11 +22,15 @@ def create_feeds():
     # Generate xml feeds using the swbi_parser
     for location in swbi_locations:
         filename = f'{feed_directory_name}/{location[0]}.xml'
+        meta_filename = f'{feed_directory_name}/meta_{location[0]}.xml'
         try:
             feed = swbi_parser.parse_mensa_plan(location[1])
             with open(filename, 'w', encoding='utf-8') as f:
                 f.write(feed)
-            mensa_listing[location[0]] = gh_pages_url + filename
+            meta_feed = generate_meta_feed(gh_pages_url + filename, location[1])
+            with open(meta_filename, 'w', encoding='utf-8') as f:
+                f.write(meta_feed)
+            mensa_listing[location[0]] = gh_pages_url + meta_filename
             print(f'Created feed {location[0]}')
         except Exception as e:
             print(f'Exception during generation of feed {location[0]}: {e}')
@@ -34,6 +38,24 @@ def create_feeds():
     with open(f'{feed_directory_name}/index.json', 'w', encoding='utf-8') as f:
         json.dump(mensa_listing, f)
         print('Created index.json')
+
+def generate_meta_feed(feed_url: str, source_url: str):
+    meta_xml = (
+        '<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<openmensa version="2.1"\n'
+        '           xmlns="http://openmensa.org/open-mensa-v2"\n'
+        '           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"\n'
+        '           xsi:schemaLocation="http://openmensa.org/open-mensa-v2 http://openmensa.org/open-mensa-v2.xsd">\n'
+        '  <canteen>\n'
+        '    <feed name="full">\n'
+        '      <schedule hour="3" retry="60 5 1440" />\n'
+        f'      <url>{feed_url}</url>\n'
+        f'      <source>{source_url}</source>\n'
+        '    </feed>\n'
+        '  </canteen>\n'
+        '</openmensa>'
+    )
+    return meta_xml
 
 if __name__ == '__main__':
     create_feeds()
