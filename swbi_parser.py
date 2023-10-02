@@ -33,7 +33,7 @@ def parse_mensa_plan(url: str):
                 menuItemText = menuItem.find('p', class_='menuItem__text').string
                 if menuItemText is not None:
                     # Some menu items might have an empty text
-                    notes += [ menuItemText.strip() ]
+                    notes += [ menuItemText.replace('\n', ' ').replace('\r', '').strip() ]
             
             name = menuItem.find('h3', class_='menuItem__headline').string.strip()
             
