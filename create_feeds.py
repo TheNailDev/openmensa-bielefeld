@@ -48,7 +48,7 @@ def generate_meta_feed(feed_url: str, source_url: str):
         '           xsi:schemaLocation="http://openmensa.org/open-mensa-v2 http://openmensa.org/open-mensa-v2.xsd">\n'
         '  <canteen>\n'
         '    <feed name="full">\n'
-        '      <schedule hour="3" retry="60 5 1440" />\n'
+        '      <schedule hour="6" retry="60 5 1440" />\n'
         f'      <url>{feed_url}</url>\n'
         f'      <source>{source_url}</source>\n'
         '    </feed>\n'
