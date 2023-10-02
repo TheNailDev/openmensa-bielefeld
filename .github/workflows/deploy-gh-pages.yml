@@ -2,9 +2,9 @@
 name: Publish feeds to GitHub Pages
 
 on:
-  # Runs the workflow daily at 0:00 and 12:00 UTC
+  # Runs the workflow daily at 4:00 UTC
   schedule:
-    - cron: '0 0,12 * * *'
+    - cron: '0 4 * * *'
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
