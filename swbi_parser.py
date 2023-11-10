@@ -45,24 +45,13 @@ def update_canteen(canteen, url: str):
         # dates are formatted as YYYYMMDD, eg 20230401 for April 1st 2023
         date_string = menuDay['data-selector']
         date = datetime.datetime.strptime(date_string, '%Y%m%d').date()
-        #print(date)
         menuItems = menuDay.find_all('div', class_='menuItem')
         for menuItem in menuItems:
-            notes = []
-            if 'menuItem--sidedish' in menuItem['class']:
-                # Sidedishes dont have their category stated on the page
-                category = 'Beilage'
-                notes += [ _remove_multiple_whitespaces(label.string) for label in menuItem.find_all('strong', class_='menuItem__sidedish__label') ]
-            else:
-                category = menuItem.find('span', class_='menuItem__line').string.strip()
-                menuItemText = menuItem.find('p', class_='menuItem__text').string
-                if menuItemText is not None:
-                    # Some menu items might have an empty text
-                    notes += [ _remove_multiple_whitespaces(menuItemText) ]
-            
+            # Extract the name of the meal from the menu items headline
             name = menuItem.find('h3', class_='menuItem__headline').string
             name = _remove_multiple_whitespaces(name)
             
+            # Extract the prices for the three different groups students, employees, guests (others)
             prices = {}
             price_1 = menuItem.find('p', class_='menuItem__price__one')
             if price_1 is not None:
@@ -74,7 +63,24 @@ def update_canteen(canteen, url: str):
             if price_3 is not None:
                 prices['other'] = _remove_multiple_whitespaces(price_3.find('span', type='button').string)
             
-            canteen.addMeal(date, category, name, prices=prices, notes=notes)
+            # Create an empty list for notes
+            notes = []
+            
+            # Sidedishes use a different structure and need to be handled differently from other menu items
+            if 'menuItem--sidedish' in menuItem['class']:
+                # The category of a sidedish is stored in the headline, which usually stores the name of main dishes
+                category = name
+                # The name of each sidedish is stored in each sidedish label
+                for label in menuItem.find_all('strong', class_='menuItem__sidedish__label'):
+                    name = _remove_multiple_whitespaces(label.string)
+                    canteen.addMeal(date, category, name, prices=prices, notes=notes)
+            else:
+                category = menuItem.find('span', class_='menuItem__line').string.strip()
+                menuItemText = menuItem.find('p', class_='menuItem__text').string
+                if menuItemText is not None:
+                    # Some menu items might have an empty text
+                    notes += [ _remove_multiple_whitespaces(menuItemText) ]
+                canteen.addMeal(date, category, name, prices=prices, notes=notes)
         
     return canteen
 
