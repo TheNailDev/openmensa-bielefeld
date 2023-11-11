@@ -70,9 +70,20 @@ def update_canteen(canteen, url: str):
             if 'menuItem--sidedish' in menuItem['class']:
                 # The category of a sidedish is stored in the headline, which usually stores the name of main dishes
                 category = name
-                # The name of each sidedish is stored in each sidedish label
-                for label in menuItem.find_all('strong', class_='menuItem__sidedish__label'):
-                    name = _remove_multiple_whitespaces(label.string)
+                # Every sidedish is stored in its own list element
+                for sidedish in menuItem.find_all('li', class_='menuItem__sidedish'):
+                    # The name of each sidedish is stored in each sidedish label
+                    name = _remove_multiple_whitespaces(sidedish.find('strong', class_='menuItem__sidedish__label').string)
+                    notes = []
+                    # Additional info for sidedishes can be extracted from the button "Details"
+                    details_a = sidedish.find('a', class_='button-outline')
+                    if details_a is not None:
+                        details_content = details_a['data-bs-content']
+                        details_soup = BeautifulSoup(details_content, 'html.parser')
+                        if details_soup is not None:
+                            co2_footprint_span = details_soup.find('span', class_='menuItem__co2__value')
+                            if co2_footprint_span is not None:
+                                notes += [ f'CO2: {_remove_multiple_whitespaces(co2_footprint_span.string)}' ]
                     canteen.addMeal(date, category, name, prices=prices, notes=notes)
             else:
                 category = menuItem.find('span', class_='menuItem__line').string.strip()
@@ -80,6 +91,9 @@ def update_canteen(canteen, url: str):
                 if menuItemText is not None:
                     # Some menu items might have an empty text
                     notes += [ _remove_multiple_whitespaces(menuItemText) ]
+                co2_footprint_span = menuItem.find('span', class_='menuItem__co2__value')
+                if co2_footprint_span is not None:
+                    notes += [ f'CO2: {_remove_multiple_whitespaces(co2_footprint_span.string)}' ]
                 canteen.addMeal(date, category, name, prices=prices, notes=notes)
         
     return canteen
