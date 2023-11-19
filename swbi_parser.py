@@ -81,9 +81,7 @@ def update_canteen(canteen, url: str):
                         details_content = details_a['data-bs-content']
                         details_soup = BeautifulSoup(details_content, 'html.parser')
                         if details_soup is not None:
-                            co2_footprint_span = details_soup.find('span', class_='menuItem__co2__value')
-                            if co2_footprint_span is not None:
-                                notes += [ f'CO2: {_remove_multiple_whitespaces(co2_footprint_span.string)}' ]
+                            notes += _generate_notes_from_meal_details(details_soup)
                     canteen.addMeal(date, category, name, prices=prices, notes=notes)
             else:
                 category = menuItem.find('span', class_='menuItem__line').string.strip()
@@ -91,12 +89,32 @@ def update_canteen(canteen, url: str):
                 if menuItemText is not None:
                     # Some menu items might have an empty text
                     notes += [ _remove_multiple_whitespaces(menuItemText) ]
-                co2_footprint_span = menuItem.find('span', class_='menuItem__co2__value')
-                if co2_footprint_span is not None:
-                    notes += [ f'CO2: {_remove_multiple_whitespaces(co2_footprint_span.string)}' ]
+                notes += _generate_notes_from_meal_details(menuItem)
                 canteen.addMeal(date, category, name, prices=prices, notes=notes)
         
     return canteen
+
+def _generate_notes_from_meal_details(details_soup):
+    notes = []
+    co2_footprint_span = details_soup.find('span', class_='menuItem__co2__value')
+    if co2_footprint_span is not None:
+        notes += [ f'CO2: {_remove_multiple_whitespaces(co2_footprint_span.string)}' ]
+    additives_div = details_soup.find('div', class_='menuItem__additives')
+    if additives_div is not None:
+        for custombadge_span in additives_div.find_all('span', class_='custombadge'):
+            notes += [ _generate_note_from_custombadge(custombadge_span) ]
+    allergens_div = details_soup.find('div', class_='menuItem__allergens')
+    if allergens_div is not None:
+        for custombadge_span in allergens_div.find_all('span', class_='custombadge'):
+            notes += [ _generate_note_from_custombadge(custombadge_span) ]
+    return notes
+
+def _generate_note_from_custombadge(custombadge):
+    # each custombadge consists of two child elements.
+    # the first child is the badge code, the second child is the actual description of the badge
+    code = _remove_multiple_whitespaces(custombadge.contents[0].string)
+    description = _remove_multiple_whitespaces(custombadge.contents[1])
+    return f'{code}) {description}'
 
 if __name__ == '__main__':
     # For debug purposes do parsing for Bielefeld Mensa X
