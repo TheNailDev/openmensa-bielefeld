@@ -82,6 +82,16 @@ def update_canteen(canteen, url: str):
                         details_soup = BeautifulSoup(details_content, 'html.parser')
                         if details_soup is not None:
                             notes += _generate_notes_from_meal_details(details_soup)
+                    # In some cases each side dish has its own price. (Mensa Aktionstheke)
+                    price_1 = sidedish.find('p', class_='menuItem__price__one')
+                    if price_1 is not None:
+                        prices['student'] = _remove_multiple_whitespaces(price_1.find('span', type='button').string)
+                    price_2 = sidedish.find('p', class_='menuItem__price__two')
+                    if price_2 is not None:
+                        prices['employee'] = _remove_multiple_whitespaces(price_2.find('span', type='button').string)
+                    price_3 = sidedish.find('p', class_='menuItem__price__three')
+                    if price_3 is not None:
+                        prices['other'] = _remove_multiple_whitespaces(price_3.find('span', type='button').string)
                     canteen.addMeal(date, category, name, prices=prices, notes=notes)
             else:
                 category = menuItem.find('span', class_='menuItem__line').string.strip()
