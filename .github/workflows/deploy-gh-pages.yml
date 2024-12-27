@@ -40,7 +40,7 @@ jobs:
       - name: Move feeds into docs directory
         run: mv feeds docs
       - name: Setup Pages
-        uses: actions/configure-pages@v4.0.0
+        uses: actions/configure-pages@v5.0.0
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3.0.1
         with:
