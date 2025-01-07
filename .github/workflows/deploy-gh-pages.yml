@@ -37,8 +37,6 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Generate xml feeds
         run: python create_feeds.py
-      - name: Create docs directory
-        run: mkdir docs
       - name: Load old website from cache
         uses: actions/cache@v4.2.0
         with:
