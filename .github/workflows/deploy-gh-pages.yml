@@ -37,8 +37,15 @@ jobs:
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Generate xml feeds
         run: python create_feeds.py
-      - name: Move feeds into docs directory
-        run: mv feeds docs
+      - name: Create docs directory
+        run: mkdir docs
+      - name: Load old website from cache
+        uses: actions/cache@v4.2.0
+        with:
+          path: docs
+          key: page-docs
+      - name: Copy all generated feeds into docs directory
+        run: cp feeds/* docs
       - name: Setup Pages
         uses: actions/configure-pages@v5.0.0
       - name: Upload artifact
