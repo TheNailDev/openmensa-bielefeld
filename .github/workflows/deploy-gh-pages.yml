@@ -43,7 +43,7 @@ jobs:
           path: docs
           key: page-docs
       - name: Copy all generated feeds into docs directory
-        run: cp feeds/* docs
+        run: cp -r feeds/ docs/
       - name: Setup Pages
         uses: actions/configure-pages@v5.0.0
       - name: Upload artifact
