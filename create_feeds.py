@@ -6,7 +6,7 @@ import swbi_parser
 gh_pages_url = 'https://thenaildev.github.io/openmensa-bielefeld/'
 
 swbi_locations = [
-    ('bielefeld_mensa-x', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/bielefeld/mensa-x/'),
+    ('bielefeld_mensa-x', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/bielefeld/mensa-x/gggg'),
     ('detmold_mensa-hfm', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/detmold/mensa-hfm/'),
     ('detmold_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/mensa-th-owl/'),
     ('hoexter_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/hoexter/mensa-th-owl/'),
@@ -33,8 +33,8 @@ def create_feeds():
             mensa_listing[location[0]] = gh_pages_url + meta_filename
             print(f'Created feed {location[0]}')
         except Exception as e:
-            if 'HTTP Error 5' in str(e):
-                print(f'Fatal 5xx error encountered at {location[0]}: {e}')
+            if 'HTTP Error' in str(e):
+                print(f'Fatal HTTP error encountered at {location[0]}: {e}')
                 raise
             print(f'Exception during generation of feed {location[0]}: {e}')
     # Generate the index.json containing all feeds
