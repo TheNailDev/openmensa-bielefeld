@@ -36,6 +36,9 @@ def create_feeds():
             if 'HTTP Error' in str(e):
                 print(f'Fatal HTTP error encountered at {location[0]}: {e}')
                 raise
+            elif 'Remote end closed connection without response' in str(e):
+                print(f'Connection closed unexpectedly at {location[0]}: {e}')
+                raise
             print(f'Exception during generation of feed {location[0]}: {e}')
     # Generate the index.json containing all feeds
     with open(f'{feed_directory_name}/index.json', 'w', encoding='utf-8') as f:
