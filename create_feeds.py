@@ -33,6 +33,9 @@ def create_feeds():
             mensa_listing[location[0]] = gh_pages_url + meta_filename
             print(f'Created feed {location[0]}')
         except Exception as e:
+            if 'HTTP Error 5' in str(e):
+                print(f'Fatal 5xx error encountered at {location[0]}: {e}')
+                raise
             print(f'Exception during generation of feed {location[0]}: {e}')
     # Generate the index.json containing all feeds
     with open(f'{feed_directory_name}/index.json', 'w', encoding='utf-8') as f:
