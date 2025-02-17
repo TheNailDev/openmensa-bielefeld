@@ -36,7 +36,19 @@ jobs:
       - name: Install python dependencies
         run: python -m pip install --upgrade pip && pip install -r requirements.txt
       - name: Generate xml feeds
+        id: generate1
         run: python create_feeds.py
+        continue-on-error: true
+      - name: Wait and retry
+        if: ${{ steps.generate1.outcome == 'failure' }}
+        run: |
+          sleep 300
+          python create_feeds.py
+        id: generate2
+        continue-on-error: true
+      - name: Fail if second attempt also fails
+        if: ${{ steps.generate1.outcome == 'failure' && steps.generate2.outcome == 'failure' }}
+        run: exit 1
       - name: Load old website from cache
         uses: actions/cache@v4.2.0
         with:
