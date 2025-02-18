@@ -37,6 +37,9 @@ def create_feeds():
         except urllib.error.HTTPError as e:
             print(f'Fatal HTTP error encountered at {location[0]}: {e}')
             raise
+        except urllib.error.URLError as e:
+            print(f'Connection issue encountered at {location[0]}: {e}')
+            raise
         except RemoteDisconnected as e:
             print(f'Remote end closed connection without response at {location[0]}: {e}')
             raise
