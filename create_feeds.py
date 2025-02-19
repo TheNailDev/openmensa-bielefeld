@@ -1,5 +1,7 @@
 import os
 import json
+import urllib.error
+from http.client import RemoteDisconnected
 
 import swbi_parser
 
@@ -32,6 +34,15 @@ def create_feeds():
                 f.write(meta_feed)
             mensa_listing[location[0]] = gh_pages_url + meta_filename
             print(f'Created feed {location[0]}')
+        except urllib.error.HTTPError as e:
+            print(f'Fatal HTTP error encountered at {location[0]}: {e}')
+            raise
+        except urllib.error.URLError as e:
+            print(f'Connection issue encountered at {location[0]}: {e}')
+            raise
+        except RemoteDisconnected as e:
+            print(f'Remote end closed connection without response at {location[0]}: {e}')
+            raise
         except Exception as e:
             print(f'Exception during generation of feed {location[0]}: {e}')
     # Generate the index.json containing all feeds
