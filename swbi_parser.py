@@ -93,7 +93,8 @@ def update_canteen(canteen, url: str):
                     if price_3 is not None:
                         prices['other'] = _remove_multiple_whitespaces(price_3.find('span', type='button').string)
                     canteen.addMeal(date, category, name, prices=prices, notes=notes)
-            else:
+            # Only handle non sidedishes when they have a price. Otherwise they are no real menu items.
+            elif prices:
                 category = menuItem.find('span', class_='menuItem__line').string.strip()
                 menuItemText = menuItem.find('p', class_='menuItem__text').string
                 if menuItemText is not None:
