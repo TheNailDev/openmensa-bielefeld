@@ -59,7 +59,7 @@ jobs:
       - name: Setup Pages
         uses: actions/configure-pages@v5.0.0
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3.0.1
+        uses: actions/upload-pages-artifact@v4.0.0
         with:
           # Upload the contents of the docs directory, which also includes the openmensa feeds
           path: 'docs/'
