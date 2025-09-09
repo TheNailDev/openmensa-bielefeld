@@ -75,6 +75,7 @@ def update_canteen(canteen, url: str):
                     # The name of each sidedish is stored in each sidedish label
                     name = _remove_multiple_whitespaces(sidedish.find('strong', class_='menuItem__sidedish__label').string)
                     notes = []
+                    notes += _generate_notes_from_menuItem_markings(sidedish)
                     # Additional info for sidedishes can be extracted from the button "Details"
                     details_a = sidedish.find('a', class_='button-outline')
                     if details_a is not None:
@@ -100,6 +101,7 @@ def update_canteen(canteen, url: str):
                 if menuItemText is not None:
                     # Some menu items might have an empty text
                     notes += [ _remove_multiple_whitespaces(menuItemText) ]
+                notes += _generate_notes_from_menuItem_markings_non_sidedish(menuItem)
                 notes += _generate_notes_from_meal_details(menuItem)
                 canteen.addMeal(date, category, name, prices=prices, notes=notes)
         
@@ -126,6 +128,24 @@ def _generate_note_from_custombadge(custombadge):
     code = _remove_multiple_whitespaces(custombadge.contents[0].string)
     description = _remove_multiple_whitespaces(custombadge.contents[1])
     return f'{code}) {description}'
+
+def _generate_notes_from_menuItem_markings(item_soup):
+    notes = []
+    for icon in item_soup.find_all('button', class_='menuItem__marking__icon'):
+        text = icon.find('title').string
+        text = _remove_multiple_whitespaces(text)
+        notes += [text]
+    return notes
+
+def _generate_notes_from_menuItem_markings_non_sidedish(item_soup):
+    # For non sidedishes menuItem_markings are included twice in the listing.
+    # Only read the markings from the sidebar of the menuModal to avoid duplicated notes.
+    # This also avoids that the markings from possible sidedishes inside the menuModal are read
+    menuModal_sidebar_content = item_soup.find('div', class_='menuModal__sidebar__content')
+    if menuModal_sidebar_content is not None:
+        return _generate_notes_from_menuItem_markings(menuModal_sidebar_content)
+    else:
+        return []
 
 if __name__ == '__main__':
     # For debug purposes do parsing for Bielefeld Mensa X
