@@ -50,7 +50,7 @@ jobs:
         if: ${{ steps.generate1.outcome == 'failure' && steps.generate2.outcome == 'failure' }}
         run: exit 1
       - name: Load old website from cache
-        uses: actions/cache@v4.3.0
+        uses: actions/cache@v5.0.1
         with:
           path: docs
           key: page-docs
