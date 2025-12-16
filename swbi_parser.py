@@ -132,7 +132,7 @@ def _generate_note_from_custombadge(custombadge):
 def _generate_notes_from_menuItem_markings(item_soup):
     notes = []
     for icon in item_soup.find_all('button', class_='menuItem__marking__icon'):
-        text = icon.find('title').string
+        text = icon['data-bs-title']
         text = _remove_multiple_whitespaces(text)
         notes += [text]
     return notes
