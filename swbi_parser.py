@@ -22,7 +22,7 @@ def parse_mensa_plan(url: str):
     if url[-1] != '/':
         url += '/'
     next_week_url = url
-    next_week_url += 'n%c3%a4chste-woche/'
+    next_week_url += '?tx_menu_mensa[action]=nextWeek'
     try:
         canteen = update_canteen(canteen, next_week_url)
     except Exception as e:
@@ -55,13 +55,13 @@ def update_canteen(canteen, url: str):
             prices = {}
             price_1 = menuItem.find('p', class_='menuItem__price__one')
             if price_1 is not None:
-                prices['student'] = _remove_multiple_whitespaces(price_1.find('span', type='button').string)
+                prices['student'] = _remove_multiple_whitespaces(price_1.find('span', class_='menuItem__price__value').string)
             price_2 = menuItem.find('p', class_='menuItem__price__two')
             if price_2 is not None:
-                prices['employee'] = _remove_multiple_whitespaces(price_2.find('span', type='button').string)
+                prices['employee'] = _remove_multiple_whitespaces(price_2.find('span', class_='menuItem__price__value').string)
             price_3 = menuItem.find('p', class_='menuItem__price__three')
             if price_3 is not None:
-                prices['other'] = _remove_multiple_whitespaces(price_3.find('span', type='button').string)
+                prices['other'] = _remove_multiple_whitespaces(price_3.find('span', class_='menuItem__price__value').string)
             
             # Create an empty list for notes
             notes = []
@@ -73,7 +73,7 @@ def update_canteen(canteen, url: str):
                 # Every sidedish is stored in its own list element
                 for sidedish in menuItem.find_all('li', class_='menuItem__sidedish'):
                     # The name of each sidedish is stored in each sidedish label
-                    name = _remove_multiple_whitespaces(sidedish.find('strong', class_='menuItem__sidedish__label').string)
+                    name = _remove_multiple_whitespaces(sidedish.find('span', class_='menuItem__sidedish__label').string)
                     notes = []
                     notes += _generate_notes_from_menuItem_markings(sidedish)
                     # Additional info for sidedishes can be extracted from the button "Details"
@@ -86,17 +86,23 @@ def update_canteen(canteen, url: str):
                     # In some cases each side dish has its own price. (Mensa Aktionstheke)
                     price_1 = sidedish.find('p', class_='menuItem__price__one')
                     if price_1 is not None:
-                        prices['student'] = _remove_multiple_whitespaces(price_1.find('span', type='button').string)
+                        prices['student'] = _remove_multiple_whitespaces(price_1.find('span', class_='menuItem__price__value').string)
                     price_2 = sidedish.find('p', class_='menuItem__price__two')
                     if price_2 is not None:
-                        prices['employee'] = _remove_multiple_whitespaces(price_2.find('span', type='button').string)
+                        prices['employee'] = _remove_multiple_whitespaces(price_2.find('span', class_='menuItem__price__value').string)
                     price_3 = sidedish.find('p', class_='menuItem__price__three')
                     if price_3 is not None:
-                        prices['other'] = _remove_multiple_whitespaces(price_3.find('span', type='button').string)
+                        prices['other'] = _remove_multiple_whitespaces(price_3.find('span', class_='menuItem__price__value').string)
                     canteen.addMeal(date, category, name, prices=prices, notes=notes)
             # Only handle non sidedishes when they have a price. Otherwise they are no real menu items.
             elif prices:
-                category = menuItem.find('span', class_='menuItem__line').string.strip()
+                category = menuItem.find('span', class_='menuItem__line')
+                if category is not None:
+                    category = category.string.strip()
+                else:
+                    # The hidden category identifier does not exist for all menItems.
+                    # TODO: Check whether the h2 objects with class menuDay__headline are better options for categories
+                    category = "Sonstiges"
                 menuItemText = menuItem.find('p', class_='menuItem__text').string
                 if menuItemText is not None:
                     # Some menu items might have an empty text

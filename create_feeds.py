@@ -8,12 +8,14 @@ import swbi_parser
 gh_pages_url = 'https://thenaildev.github.io/openmensa-bielefeld/'
 
 swbi_locations = [
-    ('bielefeld_mensa-x', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/bielefeld/mensa-x/'),
-    ('detmold_mensa-hfm', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/detmold/mensa-hfm/'),
-    ('detmold_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/mensa-th-owl/'),
-    ('hoexter_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/hoexter/mensa-th-owl/'),
-    ('lemgo_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/lemgo/mensa-th-owl/'),
-    ('minden_mensa-hsbi', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/speiseplan/minden/mensa-hsbi/')
+    ('bielefeld_mensa-x', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/mensa-x'),
+    ('bielefeld_sowls', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/sowls'),
+    ('bielefeld_cafeteria-lampingstrasse', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/cafeteria-lampingstrasse'),
+    ('detmold_mensa-hfm', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/mensa-hfm'),
+    ('detmold_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/mensa-th-owl-detmold'),
+    ('lemgo_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/mensa/werk-87-th-owl-lemgo'),
+    ('hoexter_mensa-th-owl', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/cafeteria-hoexter'),
+    ('minden_mensa-hsbi', 'https://www.studierendenwerk-bielefeld.de/essen-trinken/mensen-cafeterien/mensa/cafeteria-hsbi-minden')
 ]
 
 def create_feeds():
